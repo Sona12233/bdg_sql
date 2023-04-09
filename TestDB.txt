@@ -1,0 +1,84 @@
+create database TestDB
+
+create table flight (
+  flight_number int primary key,
+  origin varchar(50) not null,
+  destination varchar(50) not null,
+  departure_time date not null,
+  arrival_time date not null
+);
+
+create table passenger (
+  passenger_id int primary key,
+  name varchar(50) not null,
+  email varchar(50) not null,
+  phone_number varchar(20) not null
+);
+
+create table booking (
+  booking_id int primary key,
+  flight_number int not null,
+  passenger_id int not null,
+  booking_date date not null,
+  cost varchar(50) not null,
+  foreign key (flight_number) references flight(flight_number),
+  foreign key (passenger_id) references passenger(passenger_id)
+);
+
+1.
+select avg(regexp_replace(cost::text, '[$,]', '', 'g')::numeric)
+from booking;
+
+2.
+select origin, count(flight_number) as flight_count
+from flight
+group by origin;
+
+3.
+select destination, count(flight_number) as fight_count
+from flight
+group by destination;
+
+4.
+select origin, count(passenger_id) as passenger_count
+from booking
+inner join flight f on booking.flight_number = f.flight_number
+group by origin;
+
+5.
+select origin, avg(regexp_replace(cost::text, '[$,]', '', 'g')::numeric)
+as avg_cost_flight
+from booking
+inner join flight f on f.flight_number = booking.flight_number
+group by origin;
+
+6.
+select origin, count(passenger_id) as passenger_count
+from booking
+inner join flight f on f.flight_number = booking.flight_number
+group by origin 
+having avg(regexp_replace(cost::text, '[$,]', '', 'g')::numeric) < 200;
+
+7.
+select extract(month from booking_date) as month,
+sum(regexp_replace(cost::text, '[$,]', '', 'g')::numeric) as sum_cost
+from booking
+group by extract(month from booking_date)
+order by extract(month from booking_date);
+
+8.
+select origin, avg(passenger_number) as avg_passenger_per_flight
+from (select flight_number, count(passenger_id) as passenger_number
+	 from booking
+	 group by flight_number) as passenger_per_flight
+	 inner join flight f on passenger_per_flight.flight_number = f.flight_number
+group by origin
+having count(origin) = 5;
+
+9. 
+select destination, count(passenger_id)
+from booking
+inner join flight f on f.flight_number = booking.flight_number
+group by destination
+order by count(passenger_id) desc
+limit 10;
