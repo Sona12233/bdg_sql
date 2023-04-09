@@ -82,3 +82,11 @@ inner join flight f on f.flight_number = booking.flight_number
 group by destination
 order by count(passenger_id) desc
 limit 10;
+
+10.
+select count(origin), origin, avg(regexp_replace(cost::text, '[$,]', '', 'g')::numeric) as average_cost
+from booking
+inner join flight f on booking.flight_number = f.flight_number
+group by origin
+having count(origin) > 4
+order by average_cost desc;
