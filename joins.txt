@@ -136,6 +136,61 @@ select *
 from item_mast
 inner_join company_mast on pro_com = com_id;
 
+22.
+select im.name as item_name, price, cm.name as comp_name
+from item_mast im 
+inner join company_mast cm on cm.id = im.company_id
+
+23.
+select cm.name as comp_name,
+avg(price::numeric::integer) as avg_price
+from item_mast im
+inner join company_mast cm on cm.id = im.company_id
+group by cm.name;
+
+24.
+select cm.name as comp_name,
+avg(price::numeric::integer) as avg_price
+from item_mast im
+inner join company_mast cm on cm.id = im.company_id
+group by cm.name
+having avg(price::numeric::integer) >= 350;
+
+25.
+select item_mast.name as item_name,
+item_mast.price as max_item_price,
+company_mast.name as comp_name
+from item_mast,
+company_mast
+where item_mast.company_id = company_mast.id
+and item_mast.price::numeric::integer =
+(select max(item_mast.price::numeric::integer)
+from item_mast
+where item_mast.company_id = company_mast.id);
+
+26.
+select *
+from emp_details
+inner join emp_department ed on ed.dpt_code = emp_details.emp_dpt;
+
+27.
+select emp_fname, emp_lname, dpt_name, dpt_allotment
+from emp_details
+inner join emp_department ed on ed.dpt_code = emp_details.emp_dpt;
+
+28.
+select emp_fname, emp_lname, dpt_name, dpt_allotment
+from emp_details
+inner join emp_department ed on ed.dpt_code = emp_details.emp_dpt
+where dpt_allotment::numeric::integer >= 50000;   
+
+29.
+select dpt_name, count(emp_indo) as emp_count
+from emp_details
+inner join emp_department ed on ed.dpt_code = emp_details.emp_dpt
+group by dpt_name
+having count(*) > 2; 
+       
 
 
 
